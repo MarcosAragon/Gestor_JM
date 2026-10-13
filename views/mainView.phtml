@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GestorJM</title>
+</head>º
+<body>
+    <h1>GestorJM</h1>
+
+    <?php
+    if(isset($_SESSION['user'])){
+        echo "<h2>Tareas de ".$_SESSION['user']->getUsername()."</h2>";
+    }else{
+        echo "<h2>Debes iniciar sesion</h2>";
+    }
+    ?>
+
+    <a href="index.php?controller=login">Iniciar sesion</a>
+    <a href="index.php?controller=login&action=logout">Cerrar sesion</a>
+</body> 
+</html>
