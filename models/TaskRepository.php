@@ -2,9 +2,20 @@
 class TaskRepository {
 
     // Obtener todas las tareas de un usuario
-    public static function getTaskByUserId($userId) {
+    // añadir atributos que sea para ordenar por orden alfabetico o por fecha
+    public static function getTaskByUserId($userId,$order="default") {
         $db = DB::connect();
-        $result = $db->query("SELECT * FROM task WHERE user_id=$userId ORDER BY date ASC");
+        $orderAvailable[]="title";
+        $orderAvailable[]="date";
+
+        if($order=="default"||$order=="title"){
+            $orderquery="title";
+        }
+        else if($order=="date"){
+            $orderquery="date";
+        }
+        
+        $result = $db->query("SELECT * FROM task WHERE user_id=$userId ORDER BY $orderquery ASC");
         $tasks = [];
         while ($row = $result->fetch_assoc()) {
             $tasks[] = new Task($row['id'], $row['user_id'], $row['title'], $row['description'], $row['date'], $row['done']);
@@ -12,6 +23,7 @@ class TaskRepository {
         return $tasks;
     }
 
+    
     // Crear una nueva tarea
     public static function create($userId, $title, $description, $date) {
         $db = DB::connect();
