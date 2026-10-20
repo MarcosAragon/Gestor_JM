@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GestorJM</title>
+</head>
+<body>
+    <h1>GestorJM</h1>
+
+    <p>Sesión iniciada como <strong><?= htmlspecialchars($_SESSION['user']->getUsername()) ?></strong></p>
+    <a href="index.php?c=user&a=logout">Cerrar sesión</a>
+
+    <hr>
+
+    <h2>Nueva tarea</h2>
+       <form action="index.php?c=task&a=create" method="POST">
+        <input type="text" name="title" placeholder="Título" required><br>
+        <input type="text" name="description" placeholder="Descripción"><br>
+        <input type="date" name="date"><br>
+        <button type="submit">Crear tarea</button>
+    </form>
+        </select><br>
+        <button type="submit">Crear tarea</button>
+    </form>
+
+    <hr>
+
+    <h2>Categorías</h2>
+    <form action="index.php?c=category&a=create" method="POST">
+        <input type="text" name="name" placeholder="Nueva categoría" required>
+        <button type="submit">Crear categoría</button>
+    </form>
+    <ul>
+    <?php
+    foreach($categories as $category) {
+        echo "<li>";
+        echo htmlspecialchars($category->getName());
+        echo " | <a href='index.php?c=category&a=delete&id=".$category->getId()."'>Eliminar</a>";
+        echo "</li>";
+    }
+    ?>
+    </ul>
+
+    <h2>Mis tareas</h2>
+    <a href="index.php?order=title">Ordenar por titulo</a> |
+    <a href="index.php?order=date">Ordenar por fecha</a>
+    <br>
+    <br>
+        <?php
+    $categoryNames = [];
+    foreach($categories as $category) {
+        $categoryNames[$category->getId()] = $category->getName();
+    }
+    ?>
+    <ul>
+    <?php
+    foreach($tasks as $task) {
+        echo "<li>";
+        echo $task->getDone() ? "<s>".htmlspecialchars($task->getTitle())."</s> — Realizada" : htmlspecialchars($task->getTitle())." — Pendiente";
+        echo " | ".htmlspecialchars($task->getDate());
+        echo " | <a href='index.php?c=task&a=toggle&id=".$task->getId()."'>Cambiar estado</a>";
+        echo " | <a href='index.php?c=task&a=delete&id=".$task->getId()."'>Eliminar</a>";
+        echo " | <form action='index.php?c=task&a=add_user' method='POST' style='display:inline'>
+                <input type='hidden' name='task_id' value='".$task->getId()."'>
+                <input type='text' name='username' placeholder='Usuario' required>
+                <button type='submit'>Compartir</button>
+               </form>";
+                       echo " | <form action='index.php?c=task&a=set_category' method='POST' style='display:inline'>";
+        echo "<input type='hidden' name='task_id' value='".$task->getId()."'>";
+        echo "<select name='category_id'>";
+        echo "<option value=''>Sin categoría</option>";
+        foreach($categories as $category) {
+            $selected = ($task->getCategoryId() == $category->getId()) ? " selected" : "";
+            echo "<option value='".$category->getId()."'".$selected.">".htmlspecialchars($category->getName())."</option>";
+        }
+        echo "</select>";
+        echo "<button type='submit'>Asignar</button>";
+        echo "</form>";
+        echo "</li>";
+    }
+    ?>
+    </ul>
+
+    <h2>Tareas compartidas conmigo</h2>
+    <ul>
+    <?php
+    foreach($sharedTasks as $shared) {
+        echo "<li>";
+        echo $shared->getDone() ? "<s>".htmlspecialchars($shared->getTitle())."</s> — Realizada" : htmlspecialchars($shared->getTitle())." — Pendiente";
+        echo " | ".htmlspecialchars($shared->getDate());
+        echo " | <a href='index.php?c=task&a=toggle&id=".$shared->getId()."'>Cambiar estado</a>";
+        echo "</li>";
+    }
+    ?>
+    </ul>
+
+</body>
+</html>
