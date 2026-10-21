@@ -2,14 +2,13 @@
 
 if (isset($_GET['a'])) {
 
-    if ($_GET['a'] == 'create' && isset($_POST['title'])) {
+        if ($_GET['a'] == 'create' && isset($_POST['title'])) {
         $userId = $_SESSION['user']->getId();
         $title = $_POST['title'];
         $description = $_POST['description'];
         $date = $_POST['date'];
-        $categoryId = isset($_POST['category_id']) ? $_POST['category_id'] : null;
 
-        TaskRepository::create($userId, $title, $description, $date, $categoryId);
+        TaskRepository::create($userId, $title, $description, $date);
         header('location:index.php');
         exit;
     }
@@ -25,7 +24,7 @@ if (isset($_GET['a'])) {
         header('location:index.php');
         exit;
     }
-        if ($_GET['a'] == 'set_category' && isset($_POST['task_id']) && isset($_POST['category_id'])) {
+            if ($_GET['a'] == 'set_category' && isset($_POST['task_id']) && isset($_POST['category_id'])) {
         TaskRepository::setCategory($_POST['task_id'], $_POST['category_id'], $_SESSION['user']->getId());
         header('location:index.php');
         exit;

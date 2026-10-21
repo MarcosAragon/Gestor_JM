@@ -14,10 +14,17 @@ class CategoryRepository {
     }
 
     // Crear una categoría
+       // Crear una categoría (si el usuario no tiene ya una con ese nombre)
     public static function create($userId, $name) {
         $db = DB::connect();
         $userId = (int)$userId;
         $name = $db->real_escape_string($name);
+
+        $check = $db->query("SELECT id FROM category WHERE user_id=$userId AND name='$name'");
+        if ($check->fetch_assoc()) {
+            return;
+        }
+
         $db->query("INSERT INTO category (user_id, name) VALUES ($userId, '$name')");
     }
 

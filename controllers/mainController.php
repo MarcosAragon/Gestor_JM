@@ -42,9 +42,9 @@ if(!isset($_SESSION['user'])){
 }
 
 // Usuario logueado: cargamos sus tareas y mostramos la vista principal
-
 $order = isset($_GET['order']) ? $_GET['order'] : "default";
-$tasks = TaskRepository::getTaskByUserId($_SESSION['user']->getId(), $order);
+$filterCategory = isset($_GET['category']) ? (int)$_GET['category'] : 0;
+$tasks = TaskRepository::getTaskByUserId($_SESSION['user']->getId(), $order, $filterCategory);
 $sharedTasks = TaskShareRepository::getTaskByUserId($_SESSION['user']->getId());
 $categories = CategoryRepository::getByUserId($_SESSION['user']->getId());
 require_once('views/mainView.phtml');

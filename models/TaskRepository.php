@@ -3,48 +3,45 @@ class TaskRepository {
 
     // Obtener todas las tareas de un usuario
     // añadir atributos que sea para ordenar por orden alfabetico o por fecha
-    public static function getTaskByUserId($userId,$order="default") {
+        public static function getTaskByUserId($userId, $order="default", $categoryId=0) {
         $db = DB::connect();
-        
-       $orderquery = "title";
-        $orderAvailable[]="date";
+        $userId = (int)$userId;
+        $categoryId = (int)$categoryId;
 
-   
-if($order == "date"){
-    $orderquery = "date";
-}
-        $result = $db->query("SELECT * FROM task WHERE user_id=$userId ORDER BY $orderquery ASC");
+        $orderquery = "title";
+        if ($order == "date") {
+            $orderquery = "date";
+        }
+
+        $where = "user_id=$userId";
+        if ($categoryId > 0) {
+            $where = $where." AND category_id=$categoryId";
+        }
+
+        $result = $db->query("SELECT * FROM task WHERE $where ORDER BY $orderquery ASC");
         $tasks = [];
         while ($row = $result->fetch_assoc()) {
-          $tasks[] = new Task($row['id'], $row['user_id'], $row['title'], $row['description'], $row['date'], $row['done'], $row['category_id']);
+            $tasks[] = new Task($row['id'], $row['user_id'], $row['title'], $row['description'], $row['date'], $row['done'], $row['category_id']);
+        }
         return $tasks;
     }
-
-    }
     // Crear una nueva tarea
-      public static function create($userId, $title, $description, $date, $categoryId = null) {
+         // Crear una nueva tarea (sin categoría; se asigna después)
+    public static function create($userId, $title, $description, $date) {
         $db = DB::connect();
         $userId = (int)$userId;
         $title = $db->real_escape_string($title);
         $description = $db->real_escape_string($description);
         $date = $db->real_escape_string($date);
-
-        $categoryValue = "NULL";
-        if ($categoryId != null) {
-            $categoryId = (int)$categoryId;
-            $check = $db->query("SELECT id FROM category WHERE id=$categoryId AND user_id=$userId");
-            if ($check->fetch_assoc()) {
-                $categoryValue = $categoryId;
-            }
-        }
-
-        $db->query("INSERT INTO task (user_id, title, description, date, done, category_id) VALUES ($userId, '$title', '$description', '$date', 0, $categoryValue)");
+        $db->query("INSERT INTO task (user_id, title, description, date, done) VALUES ($userId, '$title', '$description', '$date', 0)");
     }
 
     // Eliminar una tarea
-    public static function delete($id) {
+        public static function delete($id, $userId) {
         $db = DB::connect();
-        $db->query("DELETE FROM task WHERE id=$id");
+        $id = (int)$id;
+        $userId = (int)$userId;
+        $db->query("DELETE FROM task WHERE id=$id AND user_id=$userId");
     }
 
     // Cambiar estado: pendiente ↔ realizada

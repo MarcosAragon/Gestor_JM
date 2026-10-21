@@ -20,9 +20,8 @@
         <input type="date" name="date"><br>
         <button type="submit">Crear tarea</button>
     </form>
-        </select><br>
-        <button type="submit">Crear tarea</button>
-    </form>
+        
+      
 
     <hr>
 
@@ -48,6 +47,7 @@
     <br>
     <br>
         <?php
+        
     $categoryNames = [];
     foreach($categories as $category) {
         $categoryNames[$category->getId()] = $category->getName();
@@ -59,6 +59,11 @@
         echo "<li>";
         echo $task->getDone() ? "<s>".htmlspecialchars($task->getTitle())."</s> — Realizada" : htmlspecialchars($task->getTitle())." — Pendiente";
         echo " | ".htmlspecialchars($task->getDate());
+                if ($task->getCategoryId() && isset($categoryNames[$task->getCategoryId()])) {
+            echo " | Categoría: ".htmlspecialchars($categoryNames[$task->getCategoryId()]);
+        } else {
+            echo " | Sin categoría";
+        }
         echo " | <a href='index.php?c=task&a=toggle&id=".$task->getId()."'>Cambiar estado</a>";
         echo " | <a href='index.php?c=task&a=delete&id=".$task->getId()."'>Eliminar</a>";
         echo " | <form action='index.php?c=task&a=add_user' method='POST' style='display:inline'>
@@ -84,11 +89,16 @@
 
     <h2>Tareas compartidas conmigo</h2>
     <ul>
-    <?php
+      <?php
     foreach($sharedTasks as $shared) {
         echo "<li>";
         echo $shared->getDone() ? "<s>".htmlspecialchars($shared->getTitle())."</s> — Realizada" : htmlspecialchars($shared->getTitle())." — Pendiente";
         echo " | ".htmlspecialchars($shared->getDate());
+        if ($shared->getCategoryName()) {
+            echo " | Categoría: ".htmlspecialchars($shared->getCategoryName());
+        } else {
+            echo " | Sin categoría";
+        }
         echo " | <a href='index.php?c=task&a=toggle&id=".$shared->getId()."'>Cambiar estado</a>";
         echo "</li>";
     }

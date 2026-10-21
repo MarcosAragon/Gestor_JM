@@ -6,6 +6,7 @@ class Task {
     private $description;
     private $date;
     private $done;
+        private $category_name;
 
     private $category_id;
     
@@ -34,7 +35,8 @@ class Task {
 
     public function getCategoryId() { return $this->category_id; }
 public function setCategoryId($category_id){ $this->category_id = $category_id; }
-
+    public function getCategoryName() { return $this->category_name; }
+    public function setCategoryName($category_name){ $this->category_name = $category_name; }
     
 }
 ?>
